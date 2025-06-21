@@ -9,9 +9,11 @@ RUN go mod download
 COPY src/ ./
 RUN go build -o bin/app sso/cmd/sso/main.go
 
+COPY config/ env/ ./
+
 FROM alpine
 
 COPY --from=builder /usr/local/src/bin/app /
-COPY --from=builder /usr/local/src/sso/env/.env usr/local/src/sso/config/local.yaml /
+COPY --from=builder /usr/local/src/.env usr/local/src/local.yaml /
 
 CMD [ "/app" ]
