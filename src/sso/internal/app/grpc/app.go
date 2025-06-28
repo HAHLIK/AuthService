@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"time"
 
-	"github.com/HAHLIK/AuthService/sso/internal/grpc/auth"
+	authgrpc "github.com/HAHLIK/AuthService/sso/internal/grpc/auth"
+	"github.com/HAHLIK/AuthService/sso/internal/services/auth"
+	"github.com/HAHLIK/AuthService/sso/internal/storage/sqlite"
 	"google.golang.org/grpc"
 )
 
@@ -15,10 +18,13 @@ type App struct {
 	port       int
 }
 
-func New(log *slog.Logger, port int) *App {
+func New(log *slog.Logger, port int, tokenTTL time.Duration) *App {
+	storage := sqlite.New()
+	auth := auth.New(log, storage, storage, storage, tokenTTL)
+
 	gRPCServer := grpc.NewServer()
 
-	auth.Register(gRPCServer)
+	authgrpc.Register(gRPCServer, auth)
 
 	return &App{
 		log:        log,

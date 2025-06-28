@@ -3,6 +3,8 @@ package main
 import (
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/HAHLIK/AuthService/sso/internal/app"
 	"github.com/HAHLIK/AuthService/sso/internal/config"
@@ -20,7 +22,19 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
-	application.GRPCApp.MustRun()
+
+	go application.GRPCApp.MustRun()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	sign := <-stop
+
+	log.Info("application is stopping", slog.String("signal", sign.String()))
+
+	application.GRPCApp.Stop()
+
+	log.Info("apllication stopped")
 }
 
 func setupLogger(env string) *slog.Logger {

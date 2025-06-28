@@ -17,7 +17,7 @@ func New(
 	storagePath string,
 	tokenTTL time.Duration,
 ) *App {
-	gRPCApp := grpcapp.New(log, gRPCPort)
+	gRPCApp := grpcapp.New(log, gRPCPort, tokenTTL)
 
 	return &App{
 		GRPCApp: gRPCApp,
