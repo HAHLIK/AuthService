@@ -8,7 +8,7 @@ import (
 
 	authgrpc "github.com/HAHLIK/AuthService/sso/internal/grpc/auth"
 	"github.com/HAHLIK/AuthService/sso/internal/services/auth"
-	"github.com/HAHLIK/AuthService/sso/internal/storage/sqlite"
+	"github.com/HAHLIK/AuthService/sso/internal/storage/postgres"
 	"google.golang.org/grpc"
 )
 
@@ -19,7 +19,7 @@ type App struct {
 }
 
 func New(log *slog.Logger, port int, tokenTTL time.Duration) *App {
-	storage := sqlite.New()
+	storage := postgres.New()
 	auth := auth.New(log, storage, storage, storage, tokenTTL)
 
 	gRPCServer := grpc.NewServer()

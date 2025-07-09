@@ -2,5 +2,5 @@ port: 1000
 storage_path: "./storage/sso.db"
 token_ttl: 1h
 grpc:
-  port: 8000
+  port: 8040
   timeout: 10h
